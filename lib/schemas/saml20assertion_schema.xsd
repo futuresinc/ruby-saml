@@ -56,19 +56,17 @@
     <element name="AssertionURIRef" type="anyURI"/>
     <element name="Assertion" type="saml:AssertionType"/>
     <complexType name="AssertionType">
-        <sequence>
+        <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="saml:Issuer"/>
             <element ref="ds:Signature" minOccurs="0"/>
             <element ref="saml:Subject" minOccurs="0"/>
             <element ref="saml:Conditions" minOccurs="0"/>
             <element ref="saml:Advice" minOccurs="0"/>
-            <choice minOccurs="0" maxOccurs="unbounded">
-                <element ref="saml:Statement"/>
-                <element ref="saml:AuthnStatement"/>
-                <element ref="saml:AuthzDecisionStatement"/>
-                <element ref="saml:AttributeStatement"/>
-            </choice>
-        </sequence>
+            <element ref="saml:Statement" minOccurs="0"/>
+            <element ref="saml:AuthnStatement" minOccurs="0"/>
+            <element ref="saml:AuthzDecisionStatement" minOccurs="0"/>
+            <element ref="saml:AttributeStatement" minOccurs="0"/>
+        </choice>
         <attribute name="Version" type="string" use="required"/>
         <attribute name="ID" type="ID" use="required"/>
         <attribute name="IssueInstant" type="dateTime" use="required"/>
