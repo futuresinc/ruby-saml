@@ -20,10 +20,11 @@ module OneLogin
       attr_accessor :passive
       attr_accessor :protocol_binding
       attr_accessor :attributes_index
+      attr_accessor :verification_method
 
       private
 
-      DEFAULTS = {:compress_request => true, :double_quote_xml_attribute_values => false}
+      DEFAULTS = {:compress_request => true, :double_quote_xml_attribute_values => false, :verification_method => :fingerprint}
     end
   end
 end

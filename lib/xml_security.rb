@@ -44,7 +44,7 @@ module XMLSecurity
       extract_signed_element_id
     end
 
-    def validate_document(idp_cert_fingerprint, soft = true)
+    def validate_document_by_fingerprint(idp_cert_fingerprint, soft = true)
       # get cert from response
       cert_element = REXML::XPath.first(self, "//ds:X509Certificate", { "ds"=>DSIG })
       raise OneLogin::RubySaml::ValidationError.new("Certificate element missing in response (ds:X509Certificate)") unless cert_element
@@ -60,6 +60,20 @@ module XMLSecurity
       end
 
       validate_signature(base64_cert, soft)
+    end
+
+    def validate_document_by_serial(idp_cert, soft = true)
+      serial_element = REXML::XPath.first(self, "//ds:X509SerialNumber", { "ds"=>DSIG })
+      raise OneLogin::RubySaml::ValidationError.new("SerialNumber element missing in response (ds:X509SerialNumber)") unless serial_element
+      serial_number  = serial_element.text
+      cert           = OpenSSL::X509::Certificate.new(idp_cert)
+
+      # check the serial in the document against the registered cert
+      if serial_number != cert.serial.to_s
+        return soft ? false : (raise OneLogin::RubySaml::ValidationError.new("SerialNumber mismatch"))
+      end
+
+      validate_signature(Base64.encode64(idp_cert), soft)
     end
 
     def validate_signature(base64_cert, soft = true)

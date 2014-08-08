@@ -122,6 +122,14 @@ module OneLogin
 
       private
 
+      def validate_document(soft = true)
+        if settings.verification_method == :serial
+          document.validate_document_by_serial(settings.idp_cert, soft)
+        elsif settings.verification_method == :fingerprint
+          document.validate_document_by_fingerprint(settings.idp_cert_fingerprint, soft)
+        end
+      end
+
       def validation_error(message)
         raise ValidationError.new(message)
       end
@@ -130,7 +138,7 @@ module OneLogin
         validate_structure(soft)      &&
         validate_response_state(soft) &&
         validate_conditions(soft)     &&
-        document.validate_document(get_fingerprint, soft) &&
+        validate_document(soft)       &&
         success?
       end
 
